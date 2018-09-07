@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import com.scanlibrary.ScanConstants
 import com.scanlibrary.ScanActivity
-import com.yorisprayogo.amarthascanner.R.id.imageView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 
@@ -29,10 +28,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val uri = data.extras!!.getParcelable<Uri>(ScanConstants.SCANNED_RESULT)
+            val uri = data?.extras!!.getParcelable<Uri>(ScanConstants.SCANNED_RESULT)
             var bitmap: Bitmap? = null
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
