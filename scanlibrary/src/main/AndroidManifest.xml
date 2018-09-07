@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.scanlibrary" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.scanlibrary">
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -23,6 +24,7 @@
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.scanlibrary.provider"
             android:exported="false"
+            tools:replace="android:authorities"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
