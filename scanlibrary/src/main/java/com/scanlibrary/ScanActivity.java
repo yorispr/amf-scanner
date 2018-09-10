@@ -97,8 +97,8 @@ public class ScanActivity extends Activity implements IScanner, ComponentCallbac
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.low_memory)
                         .setMessage(R.string.low_memory_message)
-                        .create()
-                        .show();
+                        .create();
+//                        .show();
                 break;
             default:
                 /*
