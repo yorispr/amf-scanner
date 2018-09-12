@@ -17,7 +17,6 @@ How to use :
         if(requestCode == REQ_CODE){
             //Image URI
             val uri = data?.extras?.getParcelable<Uri>("scannedResult")
-            println("PATHX : ${uri?.path}")
             try {
                 //Convert image URI to bitmap and do whatever with the bitmap
                 val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
