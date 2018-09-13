@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Amartha Scanner</string>
+    <string name="lbl_permissions_rationale">We need to access the camera and device storage</string>
+    <string name="lbl_permissions_denied">Permissions denied.</string>
 </resources>
