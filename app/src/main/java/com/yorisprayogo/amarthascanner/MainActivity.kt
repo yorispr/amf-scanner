@@ -4,8 +4,10 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -16,7 +18,9 @@ import com.yorisprayogo.amarthascanner.extensions.isPermissionGranted
 import com.yorisprayogo.amarthascanner.extensions.requestPermission
 import com.yorisprayogo.amarthascanner.extensions.stringRes
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.alert
 import java.io.File
+import java.io.FileOutputStream
 import java.net.URI
 
 
@@ -41,8 +45,23 @@ class MainActivity : AppCompatActivity() {
                     REQ_PERMISSIONS_CODE,
                     stringRes(R.string.lbl_permissions_rationale))
         } else {
-            startCamera()
+            if(intent?.hasExtra("amf-req-type") == true) {
+                startCamera()
+            }
         }
+
+        btnPick?.setOnClickListener {
+            alert("", "Pilih Sumber") {
+                positiveButton("Kamera") { startCameraInternal(4) }
+                negativeButton("Galeri") { startCameraInternal(5) }
+            }.show()
+        }
+    }
+
+    fun startCameraInternal(preference: Int){
+        val intent = Intent(this, ScanActivity::class.java)
+        intent.putExtra(ScanConstants.OPEN_INTENT_PREFERENCE, preference)
+        startActivityForResult(intent, REQUEST_CODE)
     }
 
     private fun startCamera() {
@@ -81,6 +100,31 @@ class MainActivity : AppCompatActivity() {
         return File(URI(path))
     }
 
+    fun saveBitmapToFile(fileName: String, bitmap: Bitmap): String {
+
+        val formattedFilename = fileName + "_${System.currentTimeMillis()}.jpg"
+        val path = Environment.getExternalStorageDirectory().absolutePath + "/amf-scanner-images"
+
+        val dest = File(path, formattedFilename)
+
+        if (!dest.exists()) {
+            dest.parentFile.mkdirs()
+            dest.createNewFile()
+        }
+
+        return try {
+            val out = FileOutputStream(dest)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, out)
+            out.flush()
+            out.close()
+            dest.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
+        }
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -91,6 +135,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
                     contentResolver.delete(uri, null, null)
+                    saveBitmapToFile("amf", bitmap)
                     imageView.setImageBitmap(bitmap)
                 } catch (e: Exception) {
                     e.printStackTrace()
